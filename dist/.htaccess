@@ -1,0 +1,21 @@
+Options -MultiViews
+RewriteEngine On
+RewriteBase /lostinparadise/
+
+RewriteRule ^api/ - [L]
+
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+RewriteRule ^ index.html [L]
+
+<FilesMatch "\.(js|css|woff2?|ttf|otf|jpg|jpeg|png|webp|avif|svg)$">
+  Header set Cache-Control "public, max-age=31536000, immutable"
+</FilesMatch>
+<FilesMatch "index\.html$">
+  Header set Cache-Control "no-cache, no-store, must-revalidate"
+</FilesMatch>
+
+AddType application/json .json
+AddCharset UTF-8 .json

@@ -1,0 +1,12 @@
+# Allow direct GET of routes.json (it's public data — same as the read endpoint).
+# Block everything else (so no one can list / download backup files).
+Options -Indexes
+
+<FilesMatch "^(?!routes\.json$).*$">
+  Require all denied
+</FilesMatch>
+
+<Files "routes.json">
+  Require all granted
+  Header set Cache-Control "no-cache, no-store, must-revalidate"
+</Files>

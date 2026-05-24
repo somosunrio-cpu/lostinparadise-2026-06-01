@@ -1,0 +1,5 @@
+# Block direct access to PHP source files? No — Apache executes .php normally,
+# so we just protect the data folder.
+
+# Make sure the data folder cannot list its contents.
+Options -Indexes
