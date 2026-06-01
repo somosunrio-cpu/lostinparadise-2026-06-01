@@ -13,9 +13,9 @@
 // ============================================================================
 
 return [
-    'admin_username'      => 'admin',
+    'admin_username'      => 'bicicleta',
     // Hash bcrypt de "changeme" — genera el tuyo y reemplázalo.
-    'admin_password_hash' => '$2y$12$jem.IlMPguwT1X1nanbR7u5daeZMQuixL9LCUL2tbrzY.hqVid2aO',
+    'admin_password_hash' => '$2y$10$teprgZRb5lo5eki/0ZOAbOEWmTNcn8Kj9xTWwmTFjxe3y9I1qukfK',
 
     // Nombre de la cookie de sesión (puedes dejarlo así).
     'session_name'        => 'lip_admin',

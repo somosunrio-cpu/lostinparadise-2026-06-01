@@ -1,15 +1,22 @@
+# SPA fallback: any URL that does NOT match a file/dir is rewritten to index.html
+# so React Router routes like /route/PLAYA01 and /admin work on refresh / deep links.
+
 Options -MultiViews
 RewriteEngine On
 RewriteBase /lostinparadise/
 
+# Don't touch the API folder — let PHP scripts and the JSON file serve normally.
 RewriteRule ^api/ - [L]
 
+# Don't rewrite real files or directories.
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
+# Everything else -> SPA entry point.
 RewriteRule ^ index.html [L]
 
+# Cache hashed assets aggressively, never cache index.html
 <FilesMatch "\.(js|css|woff2?|ttf|otf|jpg|jpeg|png|webp|avif|svg)$">
   Header set Cache-Control "public, max-age=31536000, immutable"
 </FilesMatch>
@@ -17,5 +24,6 @@ RewriteRule ^ index.html [L]
   Header set Cache-Control "no-cache, no-store, must-revalidate"
 </FilesMatch>
 
+# Force UTF-8 on JSON responses
 AddType application/json .json
 AddCharset UTF-8 .json

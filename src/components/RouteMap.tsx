@@ -39,17 +39,33 @@ L.Icon.Default.mergeOptions({
 const escapeHtml = (value: string) =>
   value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 
+//async function fetchOSRMRoute(points: { lat: number; lng: number }[]): Promise<[number, number][]> {
+//  const coords = points.map((p) => `${p.lng},${p.lat}`).join(";");
+//  const url = `https://router.project-osrm.org/route/v1/cycling/${coords}?overview=full&geometries=geojson`;
+//  try {
+//    const res = await fetch(url);
+//    const data = await res.json();
+//    if (data.code === "Ok" && data.routes?.[0]) {
+//      return data.routes[0].geometry.coordinates.map(([lng, lat]: [number, number]) => [lat, lng] as [number, number]);
+//    }
+//  } catch (e) {
+//    console.warn("OSRM fetch failed, falling back to straight lines", e);
+//  }
+//  return points.map((p) => [p.lat, p.lng] as [number, number]);
+//}
+
 async function fetchOSRMRoute(points: { lat: number; lng: number }[]): Promise<[number, number][]> {
-  const coords = points.map((p) => `${p.lng},${p.lat}`).join(";");
-  const url = `https://router.project-osrm.org/route/v1/cycling/${coords}?overview=full&geometries=geojson`;
+  const start = `${points[0].lng},${points[0].lat}`;
+  const end = `${points[points.length-1].lng},${points[points.length-1].lat}`;
+  const url = `https://api.openrouteservice.org/v2/directions/cycling-mountain?api_key=eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjY3ZmNjMjM1MGVmYTRkNzU4ZjNjYjk5ZDYwYWNlYTQ3IiwiaCI6Im11cm11cjY0In0=&start=${start}&end=${end}`;
   try {
     const res = await fetch(url);
     const data = await res.json();
-    if (data.code === "Ok" && data.routes?.[0]) {
-      return data.routes[0].geometry.coordinates.map(([lng, lat]: [number, number]) => [lat, lng] as [number, number]);
+    if (data.features?.[0]?.geometry?.coordinates) {
+      return data.features[0].geometry.coordinates.map(([lng, lat]: [number, number]) => [lat, lng] as [number, number]);
     }
   } catch (e) {
-    console.warn("OSRM fetch failed, falling back to straight lines", e);
+    console.warn("OpenRouteService fetch failed, falling back to straight lines", e);
   }
   return points.map((p) => [p.lat, p.lng] as [number, number]);
 }
