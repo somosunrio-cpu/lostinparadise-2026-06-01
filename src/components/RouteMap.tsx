@@ -40,34 +40,50 @@ const escapeHtml = (value: string) =>
   value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 
 //async function fetchOSRMRoute(points: { lat: number; lng: number }[]): Promise<[number, number][]> {
-//  const coords = points.map((p) => `${p.lng},${p.lat}`).join(";");
-//  const url = `https://router.project-osrm.org/route/v1/cycling/${coords}?overview=full&geometries=geojson`;
+//  const start = `${points[0].lng},${points[0].lat}`;
+//  const end = `${points[points.length-1].lng},${points[points.length-1].lat}`;
+//  const url = `https://api.openrouteservice.org/v2/directions/cycling-mountain?api_key=eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjY3ZmNjMjM1MGVmYTRkNzU4ZjNjYjk5ZDYwYWNlYTQ3IiwiaCI6Im11cm11cjY0In0=&start=${start}&end=${end}`;
 //  try {
 //    const res = await fetch(url);
 //    const data = await res.json();
-//    if (data.code === "Ok" && data.routes?.[0]) {
-//      return data.routes[0].geometry.coordinates.map(([lng, lat]: [number, number]) => [lat, lng] as [number, number]);
+//    if (data.features?.[0]?.geometry?.coordinates) {
+//      return data.features[0].geometry.coordinates.map(([lng, lat]: [number, number]) => [lat, lng] as [number, number]);
 //    }
 //  } catch (e) {
-//    console.warn("OSRM fetch failed, falling back to straight lines", e);
+//    console.warn("OpenRouteService fetch failed, falling back to straight lines", e);
 //  }
 //  return points.map((p) => [p.lat, p.lng] as [number, number]);
 //}
-
-async function fetchOSRMRoute(points: { lat: number; lng: number }[]): Promise<[number, number][]> {
-  const start = `${points[0].lng},${points[0].lat}`;
-  const end = `${points[points.length-1].lng},${points[points.length-1].lat}`;
-  const url = `https://api.openrouteservice.org/v2/directions/cycling-mountain?api_key=eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjY3ZmNjMjM1MGVmYTRkNzU4ZjNjYjk5ZDYwYWNlYTQ3IiwiaCI6Im11cm11cjY0In0=&start=${start}&end=${end}`;
-  try {
-    const res = await fetch(url);
-    const data = await res.json();
-    if (data.features?.[0]?.geometry?.coordinates) {
-      return data.features[0].geometry.coordinates.map(([lng, lat]: [number, number]) => [lat, lng] as [number, number]);
+async function fetchOSRMRoute(points: { lat: number; lng: number; mode?: string }[]): Promise<[number, number][]> {
+  if (points.length < 2) return points.map(p => [p.lat, p.lng]);
+  
+  let allCoords: [number, number][] = [];
+  
+  for (let i = 0; i < points.length - 1; i++) {
+    const nextPoint = points[i+1];
+    const isWalking = nextPoint.mode === "walk";
+    const profile = isWalking ? "foot-walking" : "cycling-mountain";
+    
+    const start = `${points[i].lng},${points[i].lat}`;
+    const end = `${nextPoint.lng},${nextPoint.lat}`;
+    const url = `https://api.openrouteservice.org/v2/directions/${profile}?api_key=eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjY3ZmNjMjM1MGVmYTRkNzU4ZjNjYjk5ZDYwYWNlYTQ3IiwiaCI6Im11cm11cjY0In0=&start=${start}&end=${end}`;
+    
+    try {
+      const res = await fetch(url);
+      const data = await res.json();
+      if (data.features?.[0]?.geometry?.coordinates) {
+        const segment = data.features[0].geometry.coordinates.map(([lng, lat]: [number, number]) => [lat, lng] as [number, number]);
+        allCoords = allCoords.concat(segment);
+      } else {
+        allCoords.push([points[i].lat, points[i].lng], [nextPoint.lat, nextPoint.lng]);
+      }
+    } catch (e) {
+      console.warn("OpenRouteService segment failed", e);
+      allCoords.push([points[i].lat, points[i].lng], [nextPoint.lat, nextPoint.lng]);
     }
-  } catch (e) {
-    console.warn("OpenRouteService fetch failed, falling back to straight lines", e);
   }
-  return points.map((p) => [p.lat, p.lng] as [number, number]);
+  
+  return allCoords;
 }
 
 function haversineDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
@@ -176,10 +192,29 @@ const RouteMap = ({ route }: { route: BikeRoute }) => {
       ...(initial.subdomains ? { subdomains: initial.subdomains } : {}),
     }).addTo(map);
 
+ //   route.points.forEach((point, index) => {
+ //     const title = index === 0 ? "🚩 Inicio" : index === route.points.length - 1 ? "🏁 Fin" : `Punto ${index + 1}`;
+ //     const instruction = point.instruction ? `<p style="margin: 4px 0 0;">${escapeHtml(point.instruction)}</p>` : "";
+ //     L.marker([point.lat, point.lng]).addTo(map).bindPopup(`<div><strong>${title}</strong>${instruction}</div>`);
+ //   });
     route.points.forEach((point, index) => {
       const title = index === 0 ? "🚩 Inicio" : index === route.points.length - 1 ? "🏁 Fin" : `Punto ${index + 1}`;
       const instruction = point.instruction ? `<p style="margin: 4px 0 0;">${escapeHtml(point.instruction)}</p>` : "";
-      L.marker([point.lat, point.lng]).addTo(map).bindPopup(`<div><strong>${title}</strong>${instruction}</div>`);
+      
+      let icon;
+      if (point.mode === "walk") {
+        icon = L.divIcon({
+          className: "",
+          html: `<div style="background:#16a34a; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid white; box-shadow:0 2px 4px rgba(0,0,0,0.3);">
+                  <span style="font-size:14px;">🚶</span>
+                </div>`,
+          iconSize: [24, 24],
+          iconAnchor: [12, 12]
+        });
+        L.marker([point.lat, point.lng], { icon }).addTo(map).bindPopup(`<div><strong>${title}</strong>${instruction}</div>`);
+      } else {
+        L.marker([point.lat, point.lng]).addTo(map).bindPopup(`<div><strong>${title}</strong>${instruction}</div>`);
+      }
     });
 
     const straightPositions = route.points.map<[number, number]>(({ lat, lng }) => [lat, lng]);

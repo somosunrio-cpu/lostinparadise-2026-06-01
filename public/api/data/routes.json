@@ -189,7 +189,8 @@
             {
                 "lat": 38.75634784673891,
                 "lng": 1.4351141452789176,
-                "instruction": ""
+  		"instruction": "Dejar bici y caminar",
+ 		"mode": "walk"
             },
             {
                 "lat": 38.75843386575754,

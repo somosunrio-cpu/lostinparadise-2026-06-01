@@ -7,6 +7,7 @@ export interface RoutePoint {
   lat: number;
   lng: number;
   instruction?: string;
+  mode?: "bike" | "walk";  // ← Añade esta línea
 }
 
 export interface BikeRoute {
