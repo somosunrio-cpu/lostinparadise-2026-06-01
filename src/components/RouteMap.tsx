@@ -28,7 +28,6 @@ const TILE_LAYERS: Record<MapType, { url: string; attribution: string; maxZoom?:
   },
 };
 
-// Fix default marker icon
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
@@ -39,21 +38,6 @@ L.Icon.Default.mergeOptions({
 const escapeHtml = (value: string) =>
   value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 
-//async function fetchOSRMRoute(points: { lat: number; lng: number }[]): Promise<[number, number][]> {
-//  const start = `${points[0].lng},${points[0].lat}`;
-//  const end = `${points[points.length-1].lng},${points[points.length-1].lat}`;
-//  const url = `https://api.openrouteservice.org/v2/directions/cycling-mountain?api_key=eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjY3ZmNjMjM1MGVmYTRkNzU4ZjNjYjk5ZDYwYWNlYTQ3IiwiaCI6Im11cm11cjY0In0=&start=${start}&end=${end}`;
-//  try {
-//    const res = await fetch(url);
-//    const data = await res.json();
-//    if (data.features?.[0]?.geometry?.coordinates) {
-//      return data.features[0].geometry.coordinates.map(([lng, lat]: [number, number]) => [lat, lng] as [number, number]);
-//    }
-//  } catch (e) {
-//    console.warn("OpenRouteService fetch failed, falling back to straight lines", e);
-//  }
-//  return points.map((p) => [p.lat, p.lng] as [number, number]);
-//}
 async function fetchOSRMRoute(points: { lat: number; lng: number; mode?: string }[]): Promise<[number, number][]> {
   if (points.length < 2) return points.map(p => [p.lat, p.lng]);
   
@@ -96,7 +80,6 @@ function haversineDistance(lat1: number, lng1: number, lat2: number, lng2: numbe
 }
 
 function createUserIcon(heading: number | null, mapRotation: number = 0): L.DivIcon {
-  // arrowRot is the rotation of the arrow relative to the (possibly rotated) map container
   const arrowRot = heading === null ? null : heading + mapRotation;
   const arrow =
     arrowRot === null
@@ -115,7 +98,7 @@ function createUserIcon(heading: number | null, mapRotation: number = 0): L.DivI
   });
 }
 
-const ALERT_DISTANCE = 50; // meters
+const ALERT_DISTANCE = 50;
 
 const RouteMap = ({ route }: { route: BikeRoute }) => {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
@@ -156,7 +139,6 @@ const RouteMap = ({ route }: { route: BikeRoute }) => {
   useEffect(() => { voiceEnabledRef.current = voiceEnabled; }, [voiceEnabled]);
   const { lang } = useI18n();
 
-  // Build map
   useEffect(() => {
     if (!mapContainerRef.current || route.points.length === 0) return;
 
@@ -168,7 +150,6 @@ const RouteMap = ({ route }: { route: BikeRoute }) => {
     alertedPointsRef.current = new Set();
     setNextPointIndex(0);
 
-    // CSS var --sea is already a full color (e.g. "hsl(185 75% 48%)"), so use it raw.
     const seaToken = getComputedStyle(document.documentElement).getPropertyValue("--sea").trim();
     const polylineColor = seaToken && /^(hsl|rgb|oklch|#)/i.test(seaToken)
       ? seaToken
@@ -179,7 +160,6 @@ const RouteMap = ({ route }: { route: BikeRoute }) => {
     const map = L.map(mapContainerRef.current, { zoomControl: true, scrollWheelZoom: true });
     mapRef.current = map;
 
-    // Disable follow mode when user manually drags the map
     map.on("dragstart", () => {
       if (suppressMoveEventsRef.current) return;
       if (followUserRef.current) setFollowUser(false);
@@ -192,26 +172,30 @@ const RouteMap = ({ route }: { route: BikeRoute }) => {
       ...(initial.subdomains ? { subdomains: initial.subdomains } : {}),
     }).addTo(map);
 
- //   route.points.forEach((point, index) => {
- //     const title = index === 0 ? "🚩 Inicio" : index === route.points.length - 1 ? "🏁 Fin" : `Punto ${index + 1}`;
- //     const instruction = point.instruction ? `<p style="margin: 4px 0 0;">${escapeHtml(point.instruction)}</p>` : "";
- //     L.marker([point.lat, point.lng]).addTo(map).bindPopup(`<div><strong>${title}</strong>${instruction}</div>`);
- //   });
     route.points.forEach((point, index) => {
       const title = index === 0 ? "🚩 Inicio" : index === route.points.length - 1 ? "🏁 Fin" : `Punto ${index + 1}`;
       const instruction = point.instruction ? `<p style="margin: 4px 0 0;">${escapeHtml(point.instruction)}</p>` : "";
       
-      let icon;
       if (point.mode === "walk") {
-        icon = L.divIcon({
+        const walkIcon = L.divIcon({
           className: "",
           html: `<div style="background:#16a34a; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid white; box-shadow:0 2px 4px rgba(0,0,0,0.3);">
-                  <span style="font-size:14px;">🚶</span>
-                </div>`,
+                    <span style="font-size:14px;">🚶</span>
+                  </div>`,
           iconSize: [24, 24],
           iconAnchor: [12, 12]
         });
-        L.marker([point.lat, point.lng], { icon }).addTo(map).bindPopup(`<div><strong>${title}</strong>${instruction}</div>`);
+        L.marker([point.lat, point.lng], { icon: walkIcon }).addTo(map).bindPopup(`<div><strong>${title}</strong>${instruction}</div>`);
+      } else if (point.mode === "bike") {
+        const bikeIcon = L.divIcon({
+          className: "",
+          html: `<div style="background:#3b82f6; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid white; box-shadow:0 2px 4px rgba(0,0,0,0.3);">
+                    <span style="font-size:14px;">🚲</span>
+                  </div>`,
+          iconSize: [24, 24],
+          iconAnchor: [12, 12]
+        });
+        L.marker([point.lat, point.lng], { icon: bikeIcon }).addTo(map).bindPopup(`<div><strong>${title}</strong>${instruction}</div>`);
       } else {
         L.marker([point.lat, point.lng]).addTo(map).bindPopup(`<div><strong>${title}</strong>${instruction}</div>`);
       }
@@ -239,7 +223,6 @@ const RouteMap = ({ route }: { route: BikeRoute }) => {
     };
   }, [route]);
 
-  // Swap tile layer when mapType changes
   useEffect(() => {
     if (!mapRef.current) return;
     if (tileLayerRef.current) {
@@ -253,7 +236,6 @@ const RouteMap = ({ route }: { route: BikeRoute }) => {
     }).addTo(mapRef.current);
   }, [mapType]);
 
-  // Wake Lock: keep screen on while tracking
   useEffect(() => {
     if (!tracking) return;
     const anyNav = navigator as any;
@@ -265,9 +247,7 @@ const RouteMap = ({ route }: { route: BikeRoute }) => {
     const acquire = async () => {
       try {
         wakeLock = await anyNav.wakeLock.request("screen");
-        wakeLock.addEventListener?.("release", () => {
-          // Will be re-acquired by visibilitychange handler if still tracking
-        });
+        wakeLock.addEventListener?.("release", () => {});
       } catch (e) {
         console.warn("Wake Lock request failed", e);
       }
@@ -287,7 +267,6 @@ const RouteMap = ({ route }: { route: BikeRoute }) => {
     };
   }, [tracking]);
 
-  // Device orientation (compass heading)
   useEffect(() => {
     if (!tracking) return;
 
@@ -336,7 +315,6 @@ const RouteMap = ({ route }: { route: BikeRoute }) => {
     };
   }, [tracking]);
 
-  // Update marker arrow when rotateMap toggles or tracking stops
   useEffect(() => {
     if (!tracking || !rotateMap) {
       if (userMarkerRef.current) {
@@ -349,7 +327,6 @@ const RouteMap = ({ route }: { route: BikeRoute }) => {
       }
     }
   }, [rotateMap, tracking]);
-
 
   useEffect(() => {
     if (!tracking || !mapRef.current) return;
@@ -374,7 +351,6 @@ const RouteMap = ({ route }: { route: BikeRoute }) => {
         userMarkerRef.current.setLatLng([latitude, longitude]);
       }
 
-      // Accuracy circle
       if (typeof acc === "number" && isFinite(acc)) {
         setAccuracy(acc);
         if (!accuracyCircleRef.current) {
@@ -391,7 +367,6 @@ const RouteMap = ({ route }: { route: BikeRoute }) => {
         }
       }
 
-      // Speed: prefer device-provided speed (m/s); fallback to derived from positions
       let kmh: number | null = null;
       if (typeof speed === "number" && isFinite(speed) && speed >= 0) {
         kmh = speed * 3.6;
@@ -412,7 +387,6 @@ const RouteMap = ({ route }: { route: BikeRoute }) => {
         setTimeout(() => { suppressMoveEventsRef.current = false; }, 400);
       }
 
-      // Check proximity to route points
       for (let i = 0; i < route.points.length; i++) {
         if (alertedPointsRef.current.has(i)) continue;
         const pt = route.points[i];
@@ -485,7 +459,6 @@ const RouteMap = ({ route }: { route: BikeRoute }) => {
         style={{ transform: tracking && rotateMap && heading !== null ? `scale(1.6) rotate(${-heading}deg)` : undefined }}
       />
 
-      {/* Map type selector (top-left) */}
       <div className="absolute top-4 left-4 z-[1000]">
         <button
           onClick={() => setShowMapMenu((s) => !s)}
@@ -515,7 +488,6 @@ const RouteMap = ({ route }: { route: BikeRoute }) => {
         )}
       </div>
 
-      {/* Speed & accuracy HUD */}
       {tracking && (speedKmh !== null || accuracy !== null) && (
         <div className="absolute top-4 right-4 z-[1000] bg-card/95 backdrop-blur border rounded-xl px-3 py-2 shadow-lg flex gap-3 items-center">
           {speedKmh !== null && (
@@ -533,7 +505,6 @@ const RouteMap = ({ route }: { route: BikeRoute }) => {
         </div>
       )}
 
-      {/* Right-side action buttons (recenter + rotate) */}
       {tracking && (
         <div className="absolute right-4 top-1/2 -translate-y-1/2 z-[1000] flex flex-col gap-2">
           <button
@@ -571,7 +542,6 @@ const RouteMap = ({ route }: { route: BikeRoute }) => {
         </div>
       )}
 
-      {/* Navigation control bar */}
       <div className="absolute bottom-4 left-4 right-4 z-[1000]">
         {tracking && nextPoint?.instruction && (
           <div className="bg-card/95 backdrop-blur border rounded-xl px-4 py-3 mb-2 shadow-lg">
@@ -610,14 +580,12 @@ const RouteMap = ({ route }: { route: BikeRoute }) => {
                 return;
               }
 
-              // Prime speech synchronously inside the user gesture (iOS/Safari requirement)
               if (voiceEnabledRef.current) {
                 primeSpeech().then(() => {
                   speak(lang === "es" ? "Ruta iniciada" : "Route started", lang);
                 });
               }
 
-              // Request geolocation permission inside the user gesture so the browser shows the prompt
               navigator.geolocation.getCurrentPosition(
                 (pos) => {
                   setFollowUser(true);

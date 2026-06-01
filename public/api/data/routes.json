@@ -139,63 +139,86 @@
             {
                 "lat": 38.734142468497915,
                 "lng": 1.4162242412567276,
-                "instruction": ""
+                "instruction": "",
+		"icon": "walk",
+ 		"mode": "walk"
             },
             {
                 "lat": 38.732364010260845,
                 "lng": 1.416919827461243,
-                "instruction": ""
+                "instruction": "Recogemos la Bicicleta",
+		"icon": "bike",
+ 		"mode": "walk"
             },
             {
                 "lat": 38.73373517059907,
                 "lng": 1.423684358596802,
-                "instruction": ""
+                "instruction": "",
+		"icon": "bike",
+ 		"mode": "bike"
             },
             {
                 "lat": 38.73518859971815,
                 "lng": 1.4254117012023928,
-                "instruction": ""
+                "instruction": "",
+		"icon": "bike",
+ 		"mode": "bike"
             },
             {
                 "lat": 38.73901870408017,
                 "lng": 1.430250406265259,
-                "instruction": ""
+                "instruction": "",
+		"icon": "bike",
+ 		"mode": "bike"
             },
             {
                 "lat": 38.74061149837198,
                 "lng": 1.434581279754652,
-                "instruction": ""
+                "instruction": "",
+		"icon": "bike",
+ 		"mode": "bike"
             },
             {
                 "lat": 38.74671455637796,
                 "lng": 1.432600021362305,
-                "instruction": ""
+                "instruction": "",
+		"icon": "bike",
+ 		"mode": "bike"
             },
             {
                 "lat": 38.75404701976087,
                 "lng": 1.4338517189026012,
-                "instruction": ""
+                "instruction": "",
+		"icon": "bike",
+ 		"mode": "bike"
             },
             {
                 "lat": 38.75434822314799,
                 "lng": 1.4331686496734621,
-                "instruction": ""
+                "instruction": "",
+		"icon": "bike",
+ 		"mode": "bike"
             },
             {
                 "lat": 38.75359939571254,
                 "lng": 1.4329165220260622,
-                "instruction": ""
+                "instruction": "",
+		"icon": "bike",
+ 		"mode": "bike"
             },
             {
                 "lat": 38.75634784673891,
                 "lng": 1.4351141452789176,
   		"instruction": "Dejar bici y caminar",
+		"icon": "walk",
  		"mode": "walk"
             },
             {
                 "lat": 38.75843386575754,
                 "lng": 1.4355647563934195,
-                "instruction": ""
+                "instruction": "",
+		"icon": "walk",
+ 		"mode": "walk"
             }
         ]
     },

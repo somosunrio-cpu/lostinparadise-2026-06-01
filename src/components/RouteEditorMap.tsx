@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input";
 import { ArrowDown, ArrowUp, MapPin, Search, Trash2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
-// Default Leaflet marker icon (already configured in RouteMap, but keep here too)
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
@@ -28,9 +27,9 @@ const numberedIcon = (n: number, color: string) =>
   });
 
 const colorFor = (i: number, total: number) => {
-  if (i === 0) return "#16a34a"; // start green
-  if (i === total - 1) return "#dc2626"; // end red
-  return "#2563eb"; // mid blue
+  if (i === 0) return "#16a34a";
+  if (i === total - 1) return "#dc2626";
+  return "#2563eb";
 };
 
 interface NominatimResult {
@@ -57,7 +56,6 @@ const RouteEditorMap = ({ points, onChange }: Props) => {
 
   useEffect(() => { pointsRef.current = points; }, [points]);
 
-  // Init map
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
     const map = L.map(containerRef.current, { zoomControl: true, scrollWheelZoom: true });
@@ -68,16 +66,14 @@ const RouteEditorMap = ({ points, onChange }: Props) => {
       maxZoom: 19,
     }).addTo(map);
 
-    // Initial view
     if (pointsRef.current.length > 0) {
       const bounds = L.latLngBounds(pointsRef.current.map((p) => [p.lat, p.lng] as [number, number]));
       if (pointsRef.current.length === 1) map.setView([pointsRef.current[0].lat, pointsRef.current[0].lng], 14);
       else map.fitBounds(bounds, { padding: [40, 40] });
     } else {
-      map.setView([38.7080, 1.4220], 13); // Formentera default
+      map.setView([38.7080, 1.4220], 13);
     }
 
-    // Click to add point
     map.on("click", (e: L.LeafletMouseEvent) => {
       const next = [...pointsRef.current, { lat: e.latlng.lat, lng: e.latlng.lng, instruction: "" }];
       onChange(next);
@@ -89,15 +85,12 @@ const RouteEditorMap = ({ points, onChange }: Props) => {
       markersRef.current = [];
       lineRef.current = null;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Sync markers + polyline whenever points change
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
 
-    // Clear old markers
     markersRef.current.forEach((m) => map.removeLayer(m));
     markersRef.current = [];
 
@@ -114,7 +107,6 @@ const RouteEditorMap = ({ points, onChange }: Props) => {
       markersRef.current.push(marker);
     });
 
-    // Polyline
     if (lineRef.current) {
       map.removeLayer(lineRef.current);
       lineRef.current = null;
@@ -127,7 +119,6 @@ const RouteEditorMap = ({ points, onChange }: Props) => {
     }
   }, [points, onChange]);
 
-  // Search via Nominatim
   const runSearch = async () => {
     if (!search.trim()) return;
     setSearching(true);
@@ -172,6 +163,10 @@ const RouteEditorMap = ({ points, onChange }: Props) => {
     onChange(points.map((p, i) => (i === idx ? { ...p, instruction: value } : p)));
   };
 
+  const updateMode = (idx: number, mode: "bike" | "walk") => {
+    onChange(points.map((p, i) => (i === idx ? { ...p, mode } : p)));
+  };
+
   const fitToPoints = () => {
     if (!mapRef.current || points.length === 0) return;
     if (points.length === 1) mapRef.current.setView([points[0].lat, points[0].lng], 15);
@@ -180,7 +175,6 @@ const RouteEditorMap = ({ points, onChange }: Props) => {
 
   return (
     <div className="space-y-3">
-      {/* Search bar */}
       <div className="space-y-2">
         <div className="flex gap-2">
           <div className="relative flex-1">
@@ -214,7 +208,6 @@ const RouteEditorMap = ({ points, onChange }: Props) => {
         )}
       </div>
 
-      {/* Map */}
       <div className="relative">
         <div ref={containerRef} className="w-full h-[420px] rounded-xl border overflow-hidden" />
         <div className="absolute top-2 right-2 z-[500] flex gap-2">
@@ -229,7 +222,6 @@ const RouteEditorMap = ({ points, onChange }: Props) => {
         </p>
       </div>
 
-      {/* Points list */}
       <div className="space-y-2">
         {points.length === 0 && (
           <p className="text-sm text-muted-foreground text-center py-4">
@@ -250,6 +242,14 @@ const RouteEditorMap = ({ points, onChange }: Props) => {
               value={p.instruction || ""}
               onChange={(e) => updateInstruction(i, e.target.value)}
             />
+            <select
+              className="w-24 h-10 rounded-md border border-input bg-background px-2 text-sm"
+              value={p.mode || "bike"}
+              onChange={(e) => updateMode(i, e.target.value as "bike" | "walk")}
+            >
+              <option value="bike">🚲 Bici</option>
+              <option value="walk">🚶 Andando</option>
+            </select>
             <span className="text-[10px] text-muted-foreground font-mono hidden sm:inline">
               {p.lat.toFixed(4)}, {p.lng.toFixed(4)}
             </span>

@@ -148,7 +148,10 @@ function lip_sanitize_route(array $input): array {
         if ($lat === null || $lng === null) continue;
         if ($lat < -90 || $lat > 90 || $lng < -180 || $lng > 180) continue;
         $ins = isset($p['instruction']) && is_string($p['instruction']) ? mb_substr(trim($p['instruction']), 0, 500) : '';
-        $points[] = ['lat' => $lat, 'lng' => $lng, 'instruction' => $ins];
+   //     $points[] = ['lat' => $lat, 'lng' => $lng, 'instruction' => $ins];
+	$mode = isset($p['mode']) && in_array($p['mode'], ['bike', 'walk'], true) ? $p['mode'] : null;
+	$points[] = ['lat' => $lat, 'lng' => $lng, 'instruction' => $ins, 'mode' => $mode];
+
     }
 
     return [
