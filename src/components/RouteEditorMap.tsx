@@ -75,7 +75,8 @@ const RouteEditorMap = ({ points, onChange }: Props) => {
     }
 
     map.on("click", (e: L.LeafletMouseEvent) => {
-      const next = [...pointsRef.current, { lat: e.latlng.lat, lng: e.latlng.lng, instruction: "" }];
+  //    const next = [...pointsRef.current, { lat: e.latlng.lat, lng: e.latlng.lng, instruction: "" }];
+	const next = [...pointsRef.current, { lat: e.latlng.lat, lng: e.latlng.lng, instruction: "", mode: "bike" }];
       onChange(next);
     });
 
@@ -141,7 +142,8 @@ const RouteEditorMap = ({ points, onChange }: Props) => {
   const addFromResult = (r: NominatimResult) => {
     const lat = parseFloat(r.lat);
     const lng = parseFloat(r.lon);
-    onChange([...points, { lat, lng, instruction: r.display_name.split(",")[0] }]);
+//    onChange([...points, { lat, lng, instruction: r.display_name.split(",")[0] }]);
+	onChange([...points, { lat, lng, instruction: r.display_name.split(",")[0], mode: "bike" }]);
     if (mapRef.current) mapRef.current.setView([lat, lng], 16);
     setResults([]);
     setSearch("");

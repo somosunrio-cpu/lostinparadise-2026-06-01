@@ -21,10 +21,11 @@ const TILE_LAYERS: Record<MapType, { url: string; attribution: string; maxZoom?:
     maxZoom: 19,
   },
   cycling: {
-    url: "https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png",
+    url: "http://b.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png",
+//    url: "https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png",
     attribution: '&copy; <a href="https://www.cyclosm.org">CyclOSM</a> | &copy; OpenStreetMap',
     maxZoom: 20,
-    subdomains: "abc",
+//    subdomains: "abc",
   },
 };
 
@@ -472,7 +473,7 @@ const RouteMap = ({ route }: { route: BikeRoute }) => {
             {([
               { id: "streets", label: lang === "es" ? "Calles" : "Streets" },
               { id: "satellite", label: lang === "es" ? "Satélite" : "Satellite" },
-              { id: "cycling", label: lang === "es" ? "Ciclismo" : "Cycling" },
+//              { id: "cycling", label: lang === "es" ? "Ciclismo" : "Cycling" },
             ] as { id: MapType; label: string }[]).map((opt) => (
               <button
                 key={opt.id}

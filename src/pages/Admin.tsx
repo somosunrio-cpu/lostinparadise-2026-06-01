@@ -19,7 +19,8 @@ const emptyRoute: Omit<BikeRoute, "id"> = {
   distance: "",
   duration: "",
   difficulty: "Fácil",
-  points: [{ lat: 38.708, lng: 1.422, instruction: "" }],
+//  points: [{ lat: 38.708, lng: 1.422, instruction: "" }],
+points: [{ lat: 38.708, lng: 1.422, instruction: "", mode: "bike" }],
 };
 
 export default function Admin() {
