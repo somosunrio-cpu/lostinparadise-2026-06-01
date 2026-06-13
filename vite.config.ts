@@ -8,7 +8,7 @@ import path from "node:path";
 // Designed to be uploaded to any static host (IONOS, etc.).
 // PHP files live in public/api/ and Vite copies them as-is into dist/api/.
 export default defineConfig(({ mode }) => ({
-  base: '/lostinparadise/',   // ← AÑADE ESTA LÍNEA
+  base: '/',   // ← AÑADE ESTA LÍNEA
   plugins: [react(), tailwindcss(), tsconfigPaths()],
   resolve: {
     alias: {

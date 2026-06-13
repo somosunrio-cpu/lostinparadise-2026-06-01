@@ -5,7 +5,7 @@
 
 import type { BikeRoute } from "./routes-data";
 
-const API_BASE = "/lostinparadise/api";
+const API_BASE = "/api";
 
 async function jsonOrThrow<T>(res: Response): Promise<T> {
   const ct = res.headers.get("content-type") || "";

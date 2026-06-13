@@ -10,7 +10,7 @@ import "./styles.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <BrowserRouter basename="/lostinparadise">
+    <BrowserRouter basename="/">
       <I18nProvider>
         <TooltipProvider>
           <App />
