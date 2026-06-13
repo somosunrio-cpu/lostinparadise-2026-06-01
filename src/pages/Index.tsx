@@ -91,14 +91,14 @@ export default function Index() {
             {loading ? "…" : t("accessButton")}
           </Button>
         </form>
-
+{/*
         <Link
           to="/admin"
           className="text-primary-foreground/60 hover:text-primary-foreground text-xs mt-6 underline-offset-4 hover:underline"
         >
           {t("adminAccess") || "Acceso administrador"}
         </Link>
-
+*/}
         <p className="text-primary-foreground/40 text-xs mt-6 font-body">
           {t("copyright")}
         </p>

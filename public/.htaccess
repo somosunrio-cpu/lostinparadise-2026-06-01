@@ -3,7 +3,7 @@
 
 Options -MultiViews
 RewriteEngine On
-RewriteBase /
+RewriteBase /lostinparadise/
 
 # Don't touch the API folder — let PHP scripts and the JSON file serve normally.
 RewriteRule ^api/ - [L]
