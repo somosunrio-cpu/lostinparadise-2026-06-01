@@ -21,6 +21,7 @@ $expectedHash = (string)$cfg['admin_password_hash'];
 $userOk = hash_equals($expectedUser, $user);
 $passOk = password_verify($pass, $expectedHash);
 
+sleep(2);
 if (!$userOk || !$passOk) lip_json_error('Credenciales incorrectas', 401);
 
 lip_start_session();

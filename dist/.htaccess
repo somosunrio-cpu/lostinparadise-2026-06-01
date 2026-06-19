@@ -27,3 +27,13 @@ RewriteRule ^ index.html [L]
 # Force UTF-8 on JSON responses
 AddType application/json .json
 AddCharset UTF-8 .json
+
+# Seguridad - Cabeceras
+<IfModule mod_headers.c>
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-XSS-Protection "0"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "geolocation=(self), microphone=(), camera=()"
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+</IfModule>

@@ -141,13 +141,26 @@ function AdminPanel({ onLogout }: { onLogout: () => void }) {
   };
 
   const handleDelete = async (id: string) => {
-    try {
-      await apiDeleteRoute(id);
-      await reload();
-    } catch (err) {
-      toast.error((err as Error).message || "Error");
-    }
-  };
+  if (!confirm("¿Estás seguro de que quieres eliminar esta ruta? Esta acción no se puede deshacer.")) {
+    return;
+  }
+  try {
+    await apiDeleteRoute(id);
+    await reload();
+    toast.success("Ruta eliminada correctamente");
+  } catch (err) {
+    toast.error((err as Error).message || "Error");
+  }
+};
+
+//  const handleDelete = async (id: string) => {
+//    try {
+//      await apiDeleteRoute(id);
+//      await reload();
+//    } catch (err) {
+//      toast.error((err as Error).message || "Error");
+//    }
+//  };
 
   if (editing) {
     return (
