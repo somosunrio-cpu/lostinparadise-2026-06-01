@@ -22,10 +22,8 @@ const TILE_LAYERS: Record<MapType, { url: string; attribution: string; maxZoom?:
   },
   cycling: {
     url: "http://b.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png",
-//    url: "https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png",
     attribution: '&copy; <a href="https://www.cyclosm.org">CyclOSM</a> | &copy; OpenStreetMap',
     maxZoom: 20,
-//    subdomains: "abc",
   },
 };
 
@@ -41,18 +39,19 @@ const escapeHtml = (value: string) =>
 
 async function fetchOSRMRoute(points: { lat: number; lng: number; mode?: string }[]): Promise<[number, number][]> {
   if (points.length < 2) return points.map(p => [p.lat, p.lng]);
-  
+
   let allCoords: [number, number][] = [];
-  
+
   for (let i = 0; i < points.length - 1; i++) {
     const nextPoint = points[i+1];
-    const isWalking = nextPoint.mode === "walk";
-    const profile = isWalking ? "foot-walking" : "cycling-mountain";
-    
+    let profile = "cycling-mountain";
+    if (nextPoint.mode === "walk") profile = "foot-walking";
+    if (nextPoint.mode === "moto") profile = "driving-car";
+
     const start = `${points[i].lng},${points[i].lat}`;
     const end = `${nextPoint.lng},${nextPoint.lat}`;
     const url = `https://api.openrouteservice.org/v2/directions/${profile}?api_key=eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjY3ZmNjMjM1MGVmYTRkNzU4ZjNjYjk5ZDYwYWNlYTQ3IiwiaCI6Im11cm11cjY0In0=&start=${start}&end=${end}`;
-    
+
     try {
       const res = await fetch(url);
       const data = await res.json();
@@ -67,7 +66,7 @@ async function fetchOSRMRoute(points: { lat: number; lng: number; mode?: string 
       allCoords.push([points[i].lat, points[i].lng], [nextPoint.lat, nextPoint.lng]);
     }
   }
-  
+
   return allCoords;
 }
 
@@ -176,7 +175,7 @@ const RouteMap = ({ route }: { route: BikeRoute }) => {
     route.points.forEach((point, index) => {
       const title = index === 0 ? "🚩 Inicio" : index === route.points.length - 1 ? "🏁 Fin" : `Punto ${index + 1}`;
       const instruction = point.instruction ? `<p style="margin: 4px 0 0;">${escapeHtml(point.instruction)}</p>` : "";
-      
+
       if (point.mode === "walk") {
         const walkIcon = L.divIcon({
           className: "",
@@ -197,6 +196,16 @@ const RouteMap = ({ route }: { route: BikeRoute }) => {
           iconAnchor: [12, 12]
         });
         L.marker([point.lat, point.lng], { icon: bikeIcon }).addTo(map).bindPopup(`<div><strong>${title}</strong>${instruction}</div>`);
+      } else if (point.mode === "moto") {
+        const motoIcon = L.divIcon({
+          className: "",
+          html: `<div style="background:#f59e0b; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid white; box-shadow:0 2px 4px rgba(0,0,0,0.3);">
+                    <span style="font-size:14px;">🛵</span>
+                  </div>`,
+          iconSize: [24, 24],
+          iconAnchor: [12, 12]
+        });
+        L.marker([point.lat, point.lng], { icon: motoIcon }).addTo(map).bindPopup(`<div><strong>${title}</strong>${instruction}</div>`);
       } else {
         L.marker([point.lat, point.lng]).addTo(map).bindPopup(`<div><strong>${title}</strong>${instruction}</div>`);
       }
@@ -473,7 +482,6 @@ const RouteMap = ({ route }: { route: BikeRoute }) => {
             {([
               { id: "streets", label: lang === "es" ? "Calles" : "Streets" },
               { id: "satellite", label: lang === "es" ? "Satélite" : "Satellite" },
-//              { id: "cycling", label: lang === "es" ? "Ciclismo" : "Cycling" },
             ] as { id: MapType; label: string }[]).map((opt) => (
               <button
                 key={opt.id}
