@@ -56,9 +56,10 @@ export default function RouteView() {
       >
         <div className="max-w-3xl mx-auto">
           <div className="flex items-center justify-between mb-2">
-            <Button variant="ghost" size="sm" onClick={() => navigate("/")} className="text-muted-foreground">
+          {/* <Button variant="ghost" size="sm" onClick={() => navigate("/")} className="text-muted-foreground">
               <ArrowLeft className="w-4 h-4 mr-1" /> {t("back")}
             </Button>
+*/}
             <LangToggle className="bg-muted/50 text-foreground border-border" />
           </div>
           <h1 className="font-display text-2xl font-bold text-foreground">{route.name}</h1>

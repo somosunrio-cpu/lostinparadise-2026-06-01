@@ -19,8 +19,7 @@ const emptyRoute: Omit<BikeRoute, "id"> = {
   distance: "",
   duration: "",
   difficulty: "Fácil",
-//  points: [{ lat: 38.708, lng: 1.422, instruction: "" }],
-points: [{ lat: 38.708, lng: 1.422, instruction: "", mode: "bike" }],
+  points: [{ lat: 38.708, lng: 1.422, instruction: "", mode: "bike" }],
 };
 
 export default function Admin() {
@@ -141,26 +140,27 @@ function AdminPanel({ onLogout }: { onLogout: () => void }) {
   };
 
   const handleDelete = async (id: string) => {
-  if (!confirm("¿Estás seguro de que quieres eliminar esta ruta? Esta acción no se puede deshacer.")) {
-    return;
-  }
-  try {
-    await apiDeleteRoute(id);
-    await reload();
-    toast.success("Ruta eliminada correctamente");
-  } catch (err) {
-    toast.error((err as Error).message || "Error");
-  }
-};
+    if (!confirm("¿Estás seguro de que quieres eliminar esta ruta? Esta acción no se puede deshacer.")) {
+      return;
+    }
+    try {
+      await apiDeleteRoute(id);
+      await reload();
+      toast.success("Ruta eliminada correctamente");
+    } catch (err) {
+      toast.error((err as Error).message || "Error");
+    }
+  };
 
-//  const handleDelete = async (id: string) => {
-//    try {
-//      await apiDeleteRoute(id);
-//      await reload();
-//    } catch (err) {
-//      toast.error((err as Error).message || "Error");
-//    }
-//  };
+  const handleDuplicate = async (route: BikeRoute) => {
+    const newRoute = {
+      ...route,
+      id: "",
+      code: route.code + "_COPY",
+      name: route.name + " (copia)",
+    };
+    setEditing(newRoute);
+  };
 
   if (editing) {
     return (
@@ -272,6 +272,9 @@ function AdminPanel({ onLogout }: { onLogout: () => void }) {
                   <Eye className="w-4 h-4" />
                 </Button>
                 <Button variant="outline" size="sm" onClick={() => setEditing({ ...route })}>{t("edit")}</Button>
+                <Button variant="outline" size="sm" onClick={() => handleDuplicate(route)}>
+                  📋 Duplicar
+                </Button>
                 <Button variant="ghost" size="sm" onClick={() => handleDelete(route.id)}>
                   <Trash2 className="w-4 h-4 text-destructive" />
                 </Button>

@@ -165,7 +165,7 @@ const RouteEditorMap = ({ points, onChange }: Props) => {
     onChange(points.map((p, i) => (i === idx ? { ...p, instruction: value } : p)));
   };
 
-  const updateMode = (idx: number, mode: "bike" | "walk" | "moto") => {
+  const updateMode = (idx: number, mode: "bike" | "walk" | "moto" | "coche") => {
     onChange(points.map((p, i) => (i === idx ? { ...p, mode } : p)));
   };
 
@@ -252,6 +252,7 @@ const RouteEditorMap = ({ points, onChange }: Props) => {
               <option value="bike">🚲 Bici</option>
               <option value="walk">🚶 Andando</option>
 	      <option value="moto">🛵 Moto</option>
+	      <option value="coche">🚗 Coche</option>
             </select>
             <span className="text-[10px] text-muted-foreground font-mono hidden sm:inline">
               {p.lat.toFixed(4)}, {p.lng.toFixed(4)}

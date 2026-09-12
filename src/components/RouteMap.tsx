@@ -47,10 +47,11 @@ async function fetchOSRMRoute(points: { lat: number; lng: number; mode?: string 
     let profile = "cycling-mountain";
     if (nextPoint.mode === "walk") profile = "foot-walking";
     if (nextPoint.mode === "moto") profile = "driving-car";
+    if (nextPoint.mode === "coche") profile = "driving-car";
 
     const start = `${points[i].lng},${points[i].lat}`;
     const end = `${nextPoint.lng},${nextPoint.lat}`;
-    const url = `https://api.openrouteservice.org/v2/directions/${profile}?api_key=eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjY3ZmNjMjM1MGVmYTRkNzU4ZjNjYjk5ZDYwYWNlYTQ3IiwiaCI6Im11cm11cjY0In0=&start=${start}&end=${end}`;
+const url = `https://api.heigit.org/openrouteservice/v2/directions/${profile}?api_key=eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjY3ZmNjMjM1MGVmYTRkNzU4ZjNjYjk5ZDYwYWNlYTQ3IiwiaCI6Im11cm11cjY0In0=&start=${start}&end=${end}`;
 
     try {
       const res = await fetch(url);
@@ -175,40 +176,46 @@ const RouteMap = ({ route }: { route: BikeRoute }) => {
     route.points.forEach((point, index) => {
       const title = index === 0 ? "🚩 Inicio" : index === route.points.length - 1 ? "🏁 Fin" : `Punto ${index + 1}`;
       const instruction = point.instruction ? `<p style="margin: 4px 0 0;">${escapeHtml(point.instruction)}</p>` : "";
+      const num = index + 1;
 
+      // Icono del vehículo
+      const getVehicleIcon = (bgColor: string, emoji: string) => {
+        return L.divIcon({
+          className: "",
+          html: `<div style="background:${bgColor}; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid white; box-shadow:0 2px 4px rgba(0,0,0,0.3);">
+                    <span style="font-size:14px;">${emoji}</span>
+                  </div>`,
+          iconSize: [28, 28],
+          iconAnchor: [14, 14]
+        });
+      };
+
+const flagIcon = L.divIcon({
+  className: "",
+  html: `<div style="position:relative; top:-22px; left:14px; background:#facc15; color:#1e293b; font-size:10px; font-weight:bold; padding:2px 6px; border-radius:4px; border:1px solid white; box-shadow:0 1px 3px rgba(0,0,0,0.3); display:flex; align-items:center; justify-content:center; min-width:20px; height:18px;">
+            ${num}
+          </div>`,
+  iconSize: [0, 0],
+  iconAnchor: [0, 0]
+});
+
+      let vehicleIcon;
       if (point.mode === "walk") {
-        const walkIcon = L.divIcon({
-          className: "",
-          html: `<div style="background:#16a34a; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid white; box-shadow:0 2px 4px rgba(0,0,0,0.3);">
-                    <span style="font-size:14px;">🚶</span>
-                  </div>`,
-          iconSize: [24, 24],
-          iconAnchor: [12, 12]
-        });
-        L.marker([point.lat, point.lng], { icon: walkIcon }).addTo(map).bindPopup(`<div><strong>${title}</strong>${instruction}</div>`);
+        vehicleIcon = getVehicleIcon("#16a34a", "🚶");
       } else if (point.mode === "bike") {
-        const bikeIcon = L.divIcon({
-          className: "",
-          html: `<div style="background:#3b82f6; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid white; box-shadow:0 2px 4px rgba(0,0,0,0.3);">
-                    <span style="font-size:14px;">🚲</span>
-                  </div>`,
-          iconSize: [24, 24],
-          iconAnchor: [12, 12]
-        });
-        L.marker([point.lat, point.lng], { icon: bikeIcon }).addTo(map).bindPopup(`<div><strong>${title}</strong>${instruction}</div>`);
+        vehicleIcon = getVehicleIcon("#3b82f6", "🚲");
       } else if (point.mode === "moto") {
-        const motoIcon = L.divIcon({
-          className: "",
-          html: `<div style="background:#f59e0b; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid white; box-shadow:0 2px 4px rgba(0,0,0,0.3);">
-                    <span style="font-size:14px;">🛵</span>
-                  </div>`,
-          iconSize: [24, 24],
-          iconAnchor: [12, 12]
-        });
-        L.marker([point.lat, point.lng], { icon: motoIcon }).addTo(map).bindPopup(`<div><strong>${title}</strong>${instruction}</div>`);
+        vehicleIcon = getVehicleIcon("#f59e0b", "🛵");
+      } else if (point.mode === "coche") {
+        vehicleIcon = getVehicleIcon("#8b5cf6", "🚗");
       } else {
-        L.marker([point.lat, point.lng]).addTo(map).bindPopup(`<div><strong>${title}</strong>${instruction}</div>`);
+        vehicleIcon = getVehicleIcon("#6b7280", "📍");
       }
+
+      // Marcador con vehículo
+      L.marker([point.lat, point.lng], { icon: vehicleIcon }).addTo(map).bindPopup(`<div><strong>${title}</strong>${instruction}</div>`);
+      // Banderita con número (en la misma posición)
+      L.marker([point.lat, point.lng], { icon: flagIcon }).addTo(map);
     });
 
     const straightPositions = route.points.map<[number, number]>(({ lat, lng }) => [lat, lng]);
