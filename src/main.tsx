@@ -5,7 +5,7 @@ import App from "./App";
 import { I18nProvider } from "@/lib/i18n";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
-import InstallAppBanner from "@/components/InstallAppBanner";
+//import InstallAppBanner from "@/components/InstallAppBanner";
 import "./styles.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
@@ -15,7 +15,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <TooltipProvider>
           <App />
           <Toaster />
-          <InstallAppBanner />
+  {/*        <InstallAppBanner /> */}
         </TooltipProvider>
       </I18nProvider>
     </BrowserRouter>

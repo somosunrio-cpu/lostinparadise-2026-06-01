@@ -1,8 +1,8 @@
 [
     {
         "id": "c865a0f8-cf5e-4315-80c8-fd20ac955ff3",
-        "code": "0012026",
-        "name": "Illetes",
+        "code": "OFF1",
+        "name": "ILLETES",
         "description": "Off road trail tour",
         "distance": "",
         "duration": "",
@@ -11,74 +11,180 @@
             {
                 "lat": 38.734142468497915,
                 "lng": 1.4162242412567276,
-                "instruction": "",
+                "instruction": "Punto de embarque/desembarque",
                 "mode": "walk"
             },
             {
                 "lat": 38.732364010260845,
-                "lng": 1.416919827461243,
-                "instruction": "Recogemos la Bicicleta",
+                "lng": 1.4169198274612429,
+                "instruction": "Recoger la Bicicleta",
                 "mode": "walk"
             },
             {
-                "lat": 38.73373517059907,
+                "lat": 38.733735170599068,
                 "lng": 1.423684358596802,
-                "instruction": "",
+                "instruction": "Duo",
                 "mode": "bike"
             },
             {
                 "lat": 38.73518859971815,
                 "lng": 1.4254117012023928,
-                "instruction": "",
+                "instruction": "Beso Beach",
                 "mode": "bike"
             },
             {
-                "lat": 38.73901870408017,
+                "lat": 38.739018704080173,
                 "lng": 1.430250406265259,
-                "instruction": "",
+                "instruction": "Giro a la izquierda",
                 "mode": "bike"
             },
             {
-                "lat": 38.74061149837198,
+                "lat": 38.740611498371983,
                 "lng": 1.434581279754652,
-                "instruction": "",
+                "instruction": "Vistas de Salinas",
                 "mode": "bike"
             },
             {
                 "lat": 38.74671455637796,
-                "lng": 1.432600021362305,
-                "instruction": "",
+                "lng": 1.4326000213623049,
+                "instruction": "El molí de Sal",
                 "mode": "bike"
             },
             {
-                "lat": 38.75404701976087,
+                "lat": 38.754047019760868,
                 "lng": 1.4338517189026012,
-                "instruction": "",
+                "instruction": "Parada aparcar bicicleta",
                 "mode": "bike"
             },
             {
-                "lat": 38.75434822314799,
+                "lat": 38.754348223147993,
                 "lng": 1.4331686496734621,
-                "instruction": "",
-                "mode": "walk"
+                "instruction": "Primera parada playa de Illetes",
+                "mode": "bike"
             },
             {
-                "lat": 38.75359939571254,
+                "lat": 38.753599395712541,
                 "lng": 1.4329165220260622,
-                "instruction": "",
-                "mode": "walk"
+                "instruction": "Punto pintoresco fotográfico",
+                "mode": "bike"
             },
             {
-                "lat": 38.75634784673891,
+                "lat": 38.756347846738912,
                 "lng": 1.4351141452789176,
-                "instruction": "Dejar bici y caminar",
+                "instruction": "Aparcar bicicleta, parada Es Ministre Illetes",
                 "mode": "walk"
             },
             {
-                "lat": 38.75843386575754,
+                "lat": 38.758433865757539,
                 "lng": 1.4355647563934195,
-                "instruction": "",
+                "instruction": "Caminar hasta el punto que más os guste para disfrutar la playa!",
                 "mode": "walk"
+            },
+            {
+                "lat": 38.73229845056197,
+                "lng": 1.4184683561324942,
+                "instruction": "Art Cafe. Nuestra parada recomendada para comer algo. Rico, agradable y asequible!",
+                "mode": "bike"
+            },
+            {
+                "lat": 38.732342389515743,
+                "lng": 1.416926980018629,
+                "instruction": "Devolver la bicicleta tal y como l recibiste",
+                "mode": "walk"
+            },
+            {
+                "lat": 38.734228949259759,
+                "lng": 1.4161920547485489,
+                "instruction": "Llegar al punto de embarque antes de las 19:50h",
+                "mode": "bike"
+            }
+        ]
+    },
+    {
+        "id": "9a4122ba-2e43-4760-a1cd-4843e97ce1ec",
+        "code": "OFF2",
+        "name": "MOTORCYCLE",
+        "description": "Motobike route with several stops in magic spots. Please make sure you know to ride a motorbike before you start this route.",
+        "distance": "",
+        "duration": "",
+        "difficulty": "Fácil",
+        "points": [
+            {
+                "lat": 38.734134099386395,
+                "lng": 1.4162492752075195,
+                "instruction": "Boat Arrival/Departure Point. And walk to the motorcycle rental",
+                "mode": "walk"
+            },
+            {
+                "lat": 38.732328440644451,
+                "lng": 1.4168889820575716,
+                "instruction": "Pick up your Motorcycle",
+                "mode": "walk"
+            },
+            {
+                "lat": 38.731223681388506,
+                "lng": 1.4170499145984652,
+                "instruction": "supermarket,  don't forget to get loads of water ;) and snaks",
+                "mode": "moto"
+            },
+            {
+                "lat": 38.663614668117596,
+                "lng": 1.5832167863845825,
+                "instruction": "Far de La Mola. This Light house is one of the icons of Formentera",
+                "mode": "moto"
+            },
+            {
+                "lat": 38.669235661524802,
+                "lng": 1.5293955802917483,
+                "instruction": "Mirador de La Mola, Get your camera ready! amazing shot where you can see both sides of the island",
+                "mode": "moto"
+            },
+            {
+                "lat": 38.677586754822627,
+                "lng": 1.5165853500366211,
+                "instruction": "Es Calò de Sant Agustí. Beautiful boathouses on Tourquise waters, you can enjoy any corner for a refreshing swim or have local fish in Can Rafalet restaurant",
+                "mode": "moto"
+            },
+            {
+                "lat": 38.678633713836923,
+                "lng": 1.4848887920379772,
+                "instruction": "Mitjorn Beach. The other side of the island. Cristal clear waters and white sand. Paradise! Blue Bar is super cool",
+                "mode": "moto"
+            },
+            {
+                "lat": 38.723596610218756,
+                "lng": 1.457716226577759,
+                "instruction": "Es Pujols. Sea Side maritim walk with hippy market and many restaurants to choose if you like a bite. A must dessert is the famous & awarded Wafles on the corner.",
+                "mode": "moto"
+            },
+            {
+                "lat": 38.732386328442473,
+                "lng": 1.4168733358383316,
+                "instruction": "Drop off your motorcycle, very important: same conditions you collect it ;)",
+                "mode": "walk"
+            },
+            {
+                "lat": 38.734210816205454,
+                "lng": 1.4161956310272217,
+                "instruction": "Boat Departure Point. Walk back to the Boat Station. We hope you had a wonderful day!!",
+                "mode": "bike"
+            }
+        ]
+    },
+    {
+        "id": "74622324-62ce-414a-810a-0161e4a2c95a",
+        "code": "OFF3",
+        "name": "CAR",
+        "description": "Car Route to discover Paradise",
+        "distance": "",
+        "duration": "",
+        "difficulty": "Fácil",
+        "points": [
+            {
+                "lat": 38.734117361160386,
+                "lng": 1.4162707328796389,
+                "instruction": "",
+                "mode": "bike"
             }
         ]
     }
